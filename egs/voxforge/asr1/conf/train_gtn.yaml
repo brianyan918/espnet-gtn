@@ -44,3 +44,5 @@ transformer-encoder-activation-type: swish
 macaron-style: true
 use-cnn-module: true
 cnn-module-kernel: 7
+
+ctc_type: gtnctc
