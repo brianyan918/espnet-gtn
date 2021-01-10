@@ -87,7 +87,7 @@ class GTNCTCLossFunction(torch.autograd.Function):
         return (
             input_grad,
             None,  # targets
-            Ngtn.linear_graphone,  # blank_idx
+            None,  # blank_idx
             None,  # reduction
         )
 
