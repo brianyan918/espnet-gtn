@@ -18,7 +18,7 @@ class K2CTCLoss(torch.nn.Module):
 
   def forward(self, log_probs: torch.Tensor, targets: torch.Tensor, input_lengths: torch.Tensor, target_lengths: torch.Tensor) -> torch.Tensor:
     
-    log_probs = log_probs.permute(1,0,2) # now log_probs is [N, T, C]  batchSize x seqLength x alphabet_size
+    log_probs = log_probs.permute(1,0,2).cpu() # now log_probs is [N, T, C]  batchSize x seqLength x alphabet_size
     supervision_segments = torch.stack(
         (torch.tensor(range(input_lengths.shape[0])),
          torch.zeros(input_lengths.shape[0]),
@@ -27,7 +27,7 @@ class K2CTCLoss(torch.nn.Module):
     supervision_segments = supervision_segments[indices]
 
     dense_fsa_vec = k2.DenseFsaVec(log_probs, supervision_segments)
-    decoding_graph = self.graph_compiler.compile(targets, target_lengths)
+    decoding_graph = self.graph_compiler.compile(targets.cpu(), target_lengths)
     decoding_graph = k2.index(decoding_graph, indices.to(torch.int32)).to(log_probs.device)
 
     target_graph = k2.intersect_dense(decoding_graph, dense_fsa_vec, 10.0)
